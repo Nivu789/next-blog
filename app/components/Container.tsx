@@ -1,10 +1,14 @@
 import React from 'react'
 
-const Container = ({children}:{
-    children:React.ReactNode
-}) => {
+type ContainerProps = {
+  className?:string
+  children:React.ReactNode
+  style?:React.CSSProperties
+}
+
+const Container = ({children,className,style}:ContainerProps) => {
   return (
-    <div>
+    <div className={className} style={style}>
         {children}
     </div>
   )

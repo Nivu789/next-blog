@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button"
 const Navbar = () => {
     return (
         <>
-            <div className='flex justify-between items-center bg-red-300 text-2xl' style={{padding:"10px 120px 10px 120px"}}>
+            <div className='flex justify-between items-center shadow-xl text-2xl' style={{padding:"10px 120px 10px 120px"}}>
                 <div className=''>
                     <img src="/logo.svg" alt="" />
                 </div>
