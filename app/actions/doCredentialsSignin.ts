@@ -1,18 +1,36 @@
 "use server"
 
-import { signIn } from "next-auth/react"
+import { signIn,signOut } from "@/auth"
+import { AuthError } from "next-auth"
 
-export const doCredentialsSignin = async(email:string,password:string) =>{
 
-    console.log(email,password)
+export const doCredentialsSignin = async(formData:any) =>{
+    try {
+        const email = formData.get("email")
+        const password = formData.get("password")
+        const response = await signIn("credentials",{redirect:false,email,password})   
+        console.log(response)
+        return response
+    } catch (error:any) {
+        if (error instanceof AuthError) {
+            if (error.cause?.err instanceof Error) {
+                console.log("here here")
+              return {error:true,message:error.cause.err.message};
+            }
+          }
+          throw error;
+    }
+}
 
-    const result = await signIn("credentials",{
-        redirect:false,
-        email,
-        password
-    })
+export const doSignout = async() =>{
+    console.log("called")
+    await signOut()
+}
 
-    console.log(result)
-    
-    return result
+export const doGoogleSignin = async() =>{
+    await signIn("google",{redirectTo:'/'})
+}
+
+export const doGithubSignin = async() =>{
+    await signIn("github",{redirectTo:"/"})
 }

@@ -1,3 +1,5 @@
+
+
 import React from 'react'
 import {
     NavigationMenu,
@@ -14,17 +16,20 @@ import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 
 import { CiSearch } from "react-icons/ci";
 
-import { Button } from "@/components/ui/button"
 
 
+import { auth } from '@/auth';
+import SessionButton from './SessionButton';
 
-
-const Navbar = () => {
+const Navbar = async() => {
+    
+    const session = await auth()
+    
     return (
         <>
             <div className='flex justify-between items-center shadow-xl text-2xl' style={{padding:"10px 120px 10px 120px"}}>
                 <div className=''>
-                    <img src="/logo.svg" alt="" />
+                    <img src="./logo.svg" alt="" className=''/>
                 </div>
                 <div className='flex items-center gap-16'>
                 <div className='flex justify-center'>
@@ -87,7 +92,7 @@ const Navbar = () => {
 
                 <div className='flex items-center gap-5'>
                     <div className='bg-gray-200 p-2 rounded-full'><CiSearch /></div>
-                    <Button variant="outline">Signin</Button>
+                    <SessionButton session={session}/>
                 </div>
                 </div>
             </div>

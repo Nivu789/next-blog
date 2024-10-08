@@ -28,16 +28,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <NextAuthProvider>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NextAuthProvider>
         <Navbar/>
         {children}
-        </NextAuthProvider>
         
       </body>
     </html>
+      </NextAuthProvider>
   );
 }
