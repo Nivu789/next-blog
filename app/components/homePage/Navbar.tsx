@@ -24,6 +24,7 @@ import SessionButton from './SessionButton';
 const Navbar = async() => {
     
     const session = await auth()
+    console.log(session)
     
     return (
         <>

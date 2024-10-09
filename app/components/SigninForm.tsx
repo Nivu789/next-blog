@@ -1,12 +1,14 @@
 "use client"
 
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { Button } from '@/components/ui/button';
 import { doCredentialsSignin, doGithubSignin, doGoogleSignin } from '../actions/doCredentialsSignin';
+
+import { useSearchParams } from 'next/navigation';
 
 
 import { useRouter } from 'next/navigation';
@@ -17,9 +19,14 @@ const SigninForm = () => {
 
     const router = useRouter()
 
+    const params = useSearchParams()
+
+    const error = params.get("error")
+
+
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
-    const [error,setError] = useState('')
+    const [globalError,setGlobalError] = useState('')
 
     const handleSubmit = async(e:FormEvent) =>{
         e.preventDefault()
@@ -29,8 +36,9 @@ const SigninForm = () => {
         try {
             const response = await doCredentialsSignin(formData)
             if(response?.error){
-                console.log(response)
-                setError(response.message)
+                console.log(response.message)
+                setGlobalError(response.message)
+                
             }else{
                 
                 router.push('/')
@@ -40,6 +48,14 @@ const SigninForm = () => {
             console.log(error)
         }
     }
+
+    useEffect(()=>{
+        if(error){
+            setGlobalError("Please use the same signin method")
+        }
+
+        router.replace('/signin')
+    },[router])
 
     const handleGoogleSignin = async() =>{
         await doGoogleSignin()
@@ -53,7 +69,7 @@ const SigninForm = () => {
         <form className='flex items-center flex-col shadow-xl py-14 gap-6 px-20' onSubmit={handleSubmit}>
             <div className='text-3xl font-semibold'>Signin</div>
             <div className='text-lg'>Sign in to your account</div>
-            {error && <p className='text-red-500'>{error}</p>}
+            {globalError && <p className='text-red-500'>{globalError}</p>}
 
             <button type="button" className='py-2 border w-full flex items-center justify-center gap-2 text-lg rounded-lg px-12' onClick={handleGoogleSignin}>
                 <FcGoogle />
