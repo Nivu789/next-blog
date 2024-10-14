@@ -39,7 +39,7 @@ import Link from 'next/link';
 const Navbar = async () => {
 
     const session = await auth()
-    console.log(session)
+    console.log(session?.user.image)
 
     return (
         <>
@@ -113,7 +113,7 @@ const Navbar = async () => {
                         <DropdownMenu>
                             <DropdownMenuTrigger>
                             <div className='h-10'>
-                            <img src={session?.user.image ? session.user.image : ""} alt="" className='h-full rounded-full' />
+                            <img src={session?.user.image ? session.user.image : "./logo.svg"} alt="" className='h-full rounded-full' referrerPolicy="no-referrer"/>
                             </div>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>

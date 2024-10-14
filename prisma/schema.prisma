@@ -47,8 +47,18 @@ model Account {
 }
 
 model Blog {
-  userId            Int   @unique
+  id         Int     @id @default(autoincrement())
+  userId            Int
+  userName          String?
+  userImage         String?
   title             String
   content           String
+  createdAt DateTime @default(now())
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id Int @id @default(autoincrement())
+  categoryName String @unique
+  blogPosts Int
 }
