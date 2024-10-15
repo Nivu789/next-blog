@@ -1,17 +1,12 @@
 "use client"
 
+import { useEditBlogId } from '@/app/contexts/EditPageContext'
+import React, { useState } from 'react'
 import Container from '../Container'
-import React, { useEffect, useState } from 'react'
+import { useForm, SubmitHandler } from "react-hook-form"
 import { Editor } from 'react-draft-wysiwyg';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import './addblog.css'
 import { convertToRaw, EditorState } from 'draft-js';
-import { useForm, SubmitHandler } from "react-hook-form"
-import { createBlog, manageBlogImageUpload } from '@/app/actions/blogRelated';
-import { Bounce, toast } from 'react-toastify';
-import { useRouter } from 'next/navigation';
-
-
 
 type Inputs = {
     title: string
@@ -20,7 +15,8 @@ type Inputs = {
 }
 
 
-const AddBlog = () => {
+const EditBlog = () => {
+    const {editBlogId} = useEditBlogId()
 
     const {
         register,
@@ -30,117 +26,25 @@ const AddBlog = () => {
         formState: { errors },
     } = useForm<Inputs>()
 
+    const [publishButton, setPublishButton] = useState<boolean>(false)
+
+    const [modalOpen, setModalOpen] = useState(false)
 
     const [editorState, setEditorState] = useState(
         () => EditorState.createEmpty(),
     );
 
-    const [modalOpen, setModalOpen] = useState(false)
-
-    const router = useRouter()
-
-    //   useEffect(()=>{
-    //     console.log(editorState.getCurrentContent().getPlainText('').length)
-    //   },[editorState])
-
-    // useEffect(()=>{
-    //     const data = convertToRaw(editorState.getCurrentContent())
-    //     const convertedContent = convertFromRaw(data);
-    //     setTestEditorState(EditorState.createWithContent(convertedContent));
-    // },[editorState])
-
-    const [publishButton, setPublishButton] = useState<boolean>(false)
-
-    const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        let imageResponse;
-        if(image){
-            const formData = new FormData()
-            formData.append("image",image)
-            imageResponse = await manageBlogImageUpload(formData)
-        }
-        
-        const content = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
-        const response = await createBlog(data.title,data.category,data.subtitle, content,imageResponse?.imageUrl || "")
-
-        if (response?.success) {
-            toast.success(response?.message, {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-            });
-
-            router.push('/')
-
-        } else {
-            toast.error(response?.message, {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-            });
-        }
-    }
-
-    useEffect(() => {
-        if (editorState.getCurrentContent().getPlainText('').trim().length <= 1 || watch("title").trim().length <= 1) {
-            setPublishButton(false)
-        } else {
-            setPublishButton(true)
-        }
-    }, [editorState, watch("title")])
-
-    const category = watch("category");
-
-    const [prevCategory, setPrevCategory] = useState('');
-
     const [categoryData,setCategoryData] = useState([])
 
     const [image,setImage] = useState<File|string>("")
+    
 
-    useEffect(() => {
-        
-        const handleRequest = async() => {
-            if (category !== prevCategory) {
-                
-                const response = await fetch('/api/get-category', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json', // Specify content type
-                    },
-                    body: JSON.stringify({ category }), // Send the category as JSON
-                });
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    
+    }
 
-                if(response.ok){
-                    const {data:categoryData} = await response.json()
-                    setCategoryData(categoryData)
-                }
-                // Place your fetch request here
-                
-                // Update the previous category state
-                setPrevCategory(category);
-            }
-        };
-
-        const timeoutId = setTimeout(handleRequest, 1000);
-
-        // Clear timeout if category changes again before delay
-        return () => clearTimeout(timeoutId);
-    }, [category, prevCategory]);
-
-
-    return (
-        <Container className='pr-44 pl-44 mt-20 flex flex-col gap-4'>
+  return (
+    <Container className='pr-44 pl-44 mt-20 flex flex-col gap-4'>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className='flex items-center gap-2'>
                     {publishButton && <div>
@@ -217,9 +121,7 @@ const AddBlog = () => {
             </div>}
             </form>
         </Container>
-    )
+  )
 }
 
-export default AddBlog
-
-
+export default EditBlog

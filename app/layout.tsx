@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "./components/homePage/Navbar";
 import { NextAuthProvider } from "./components/AuthContextProvider";
-
+import EditPageContextProvider from "./contexts/EditPageContext";
 
 
 const geistSans = localFont({
@@ -34,8 +34,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Navbar/>
+        <EditPageContextProvider>
         {children}
-        
+        </EditPageContextProvider>
       </body>
     </html>
       </NextAuthProvider>
