@@ -97,10 +97,87 @@ export async function createBlog(title:string,category:string,subTitle:string,co
     }
 }
 
-
-export async function fetchIndiBlog(blogId:string|string[]){
+export async function editBlog(blogId:number,title:string,category:string,subTitle:string,image:string,content:string){
     try {
-        const idOfBlog = parseInt(blogId[0])
+        
+        console.log("image",image)
+        const existingBlog = await prisma.blog.findUnique({
+            where: {
+                id: blogId
+            }
+        });
+
+        let newThumbnail;
+        if(existingBlog){
+            if(existingBlog.thumbnail=="" && image!==""){
+                console.log("no prev image and new image is there")
+                newThumbnail = image
+            }
+
+            else if(existingBlog.thumbnail!="" && image==""){
+                console.log("prev image is there and new image is not there")
+                newThumbnail = existingBlog.thumbnail
+            }
+
+            else if(existingBlog.thumbnail!=="" && image!==""){
+                console.log("prev image is there and new image is there")
+                newThumbnail = image
+            }else{
+                console.log("in else")
+            }
+
+            // newThumbnail = existingBlog.thumbnail === "" && image !== "" ? image : existingBlog.thumbnail !== "" && image !== "" ? image : existingBlog.thumbnail!="" && image=="" && existingBlog.thumbnail;
+        }
+        
+        const editedBlog = await prisma.blog.update({
+            where: {
+                id: blogId
+            },
+            data: {
+                title,
+                topic: category,
+                subTitle,
+                content,
+                thumbnail: newThumbnail
+            }
+        });
+
+
+        if(editedBlog){
+            return {success:true}
+        }else{
+            return {success:false}
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function deleteBlog(itemId:number){
+    try {
+        const removeBlog = await prisma.blog.delete({
+            where:{
+                id:itemId
+            }
+        })
+
+        if(removeBlog){
+            return {success:true}
+        }else{
+            return {success:false}
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+export async function fetchIndiBlog(blogId:string){
+    try {
+        console.log(blogId)
+        const idOfBlog = parseInt(blogId)
+        console.log(idOfBlog)
         const blogPost = await prisma.blog.findUnique({
             where:{
                 id:idOfBlog
@@ -113,6 +190,23 @@ export async function fetchIndiBlog(blogId:string|string[]){
             return {success:false}
         }
 
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function fetchAllBlogs(){
+    try {
+        const blogs = await prisma.blog.findMany({
+            orderBy:{
+                createdAt:"desc"
+            }
+        })
+        if(blogs){
+            return {success:true,blogs}
+        }else{
+            return {success:false}
+        }
     } catch (error) {
         console.log(error)
     }

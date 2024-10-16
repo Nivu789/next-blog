@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "./components/homePage/Navbar";
 import { NextAuthProvider } from "./components/AuthContextProvider";
 import EditPageContextProvider from "./contexts/EditPageContext";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
 
 
 const geistSans = localFont({
@@ -35,6 +37,7 @@ export default function RootLayout({
       >
         <Navbar/>
         <EditPageContextProvider>
+        <ToastContainer/>
         {children}
         </EditPageContextProvider>
       </body>

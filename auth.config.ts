@@ -3,6 +3,8 @@ import { getUserDetails } from "@/app/data/users"
 import GoogleProvider from "next-auth/providers/google"
 import GithubProvider from 'next-auth/providers/github'
 import { NextAuthConfig } from "next-auth"
+import { signinUser } from "./app/actions/signinUser"
+import bcrypt from 'bcryptjs'
 
 const publicRoutes = ["/signin","/signup"]
 const authRoutes = ["/signin","/signup"]
@@ -45,10 +47,12 @@ export default {
 
                 try {
                     
-                        const user = await getUserDetails(credentials.email)
+                        const user = await signinUser(credentials.email)
                         if(user){
-                            if(user.password==credentials.password){
+                            const passMatch = await bcrypt.compare(credentials.password,user.password || "")
+                            if(passMatch){
                                 return user
+                            
                             }else{
                                 throw new Error("Credentials mismatch");
                             }

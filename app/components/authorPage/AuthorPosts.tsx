@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { SetStateAction } from 'react'
 import axios from 'axios'
 import useSWR from 'swr'
 import BlogCard from '../blogPage/BlogCard'
@@ -20,11 +20,20 @@ interface blogPosts {
  
 const fetcher = (url:string) => axios.get(url).then(res => res.data)
 
-const AuthorPosts = () => {
+const AuthorPosts = ({setUserImage,setUserName}:
+    {
+        setUserImage:(userImage:string)=>void,
+        setUserName:(username:string)=>void
+    }) => {
     
     const { data, error, isLoading } = useSWR('/api/author-posts', fetcher)
 
     console.log(data)
+
+    if(data && data.blogsPosts[0]){
+        setUserImage(data.blogsPosts[0].userImage)
+        setUserName(data.blogsPosts[0].userName)
+    }
 
     if(isLoading){
         return <div role="status" className='flex justify-center'>
@@ -43,7 +52,6 @@ const AuthorPosts = () => {
             <BlogCard item={item}/>
         ))}
         
-
             
     </div>
   )

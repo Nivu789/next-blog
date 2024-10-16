@@ -1,12 +1,16 @@
 "use client"
 
 import { useEditBlogId } from '@/app/contexts/EditPageContext'
-import React, { useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import Container from '../Container'
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm, SubmitHandler, Form } from "react-hook-form"
 import { Editor } from 'react-draft-wysiwyg';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { convertToRaw, EditorState } from 'draft-js';
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
+import { editBlog, fetchIndiBlog, manageBlogImageUpload } from '@/app/actions/blogRelated'
+import { Bounce, toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
+import 'react-toastify/dist/ReactToastify.css';
 
 type Inputs = {
     title: string
@@ -14,16 +18,31 @@ type Inputs = {
     category:string
 }
 
+type blogPost = {
+    
+        title: string;
+        id: number;
+        userId: number;
+        userName: string | null;
+        userImage: string | null;
+        content: string;
+        topic: string | null;
+        subTitle: string | null;
+        thumbnail: string | null;
+        createdAt: Date;
+    
+}
 
 const EditBlog = () => {
-    const {editBlogId} = useEditBlogId()
+    let {editBlogId} = useEditBlogId()
 
     const {
         register,
         handleSubmit,
         watch,
         setValue,
-        formState: { errors },
+        reset,
+        formState: { errors ,isSubmitting},
     } = useForm<Inputs>()
 
     const [publishButton, setPublishButton] = useState<boolean>(false)
@@ -37,14 +56,127 @@ const EditBlog = () => {
     const [categoryData,setCategoryData] = useState([])
 
     const [image,setImage] = useState<File|string>("")
+
+    const router = useRouter()
     
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    
+        console.log("Called")
+        let imageResponse;
+        if(imageChanged){
+            console.log("image is there")
+            const formData = new FormData()
+            formData.append("image",image)
+            imageResponse = await manageBlogImageUpload(formData)
+        }
+        
+        const content = JSON.stringify(convertToRaw(editorContent.getCurrentContent()))
+        if(editBlogId){
+            const response = await editBlog(editBlogId,data.title,data.category,data.subtitle,imageResponse?.imageUrl || "",content)
+            
+            if(response?.success){
+                toast.success("success", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                    onClose:()=>router.replace(`/`)
+                });
+
+                
+            }else{
+                toast.error("Failed", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
+                
+            }
+        }
+
+        
     }
+
+
+    const [editorContent,setEditorContent] = useState<EditorState>(()=>EditorState.createEmpty())
+
+    useEffect(() => {
+        if (editorContent.getCurrentContent().getPlainText('').trim().length <= 1 || watch("title").trim().length <= 1) {
+            setPublishButton(false)
+        } else {
+            setPublishButton(true)
+        }
+    }, [editorState, watch("title")])
+
+    useEffect(()=>{
+        const fetchBlogData = async() =>{
+            
+            if(!editBlogId){
+                editBlogId = parseInt(localStorage.getItem("edit-id") || "")
+            }
+
+
+            const idOfBlog = editBlogId?.toString()
+            const response = await fetchIndiBlog(idOfBlog||"")
+            if(response?.success){
+                if(response.blogPost){
+                    
+                    reset({
+                        title:response.blogPost.title,
+                        subtitle:response.blogPost.subTitle || "",
+                        category:response.blogPost.topic || ""
+                    })
+                    if(response.blogPost.thumbnail!==""){
+                        setImage(response.blogPost.thumbnail || "")
+                    }
+                    const storedState =  convertFromRaw(JSON.parse(response.blogPost?.content));
+                    setEditorContent(EditorState.createWithContent(storedState));
+                }
+            }else{
+                toast.error("Something went wrong", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                }); 
+            }
+        }
+
+        fetchBlogData()
+    },[])
+
+    useEffect(()=>{
+        console.log(editorState)
+        setEditorContent(editorState)
+    },[editorState])
+
+    const [imageChanged,setImageChanged] = useState(false)
+
+    const handleImageChange = (e:any) =>{
+        setImage(e.target.files ? e.target.files[0] : "")
+        setImageChanged(true)
+    }
+
 
   return (
     <Container className='pr-44 pl-44 mt-20 flex flex-col gap-4'>
+        
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className='flex items-center gap-2'>
                     {publishButton && <div>
@@ -56,7 +188,7 @@ const EditBlog = () => {
                 </div>
             
 
-            <Editor toolbarClassName="toolbar-class" editorClassName="editor-class" placeholder='Tell your story' editorState={editorState} onEditorStateChange={setEditorState} />
+            <Editor toolbarClassName="toolbar-class" editorClassName="editor-class" placeholder='Tell your story'  editorState={editorContent} onEditorStateChange={setEditorState} />
 
             {modalOpen && <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
 
@@ -77,7 +209,7 @@ const EditBlog = () => {
                                                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">{image ? "Contains " : "Click to upload"}</span>{image ? "1 file" : "or drag and drop"}</p>
                                                 <p className="text-xs text-gray-500 dark:text-gray-400">{image ? "Perfect" : "Include a high-quality image in your story to make it more inviting to readers."}</p>
                                             </div>
-                                            <input id="dropzone-file" type="file" className="hidden" name="image" onChange={(e)=>setImage(e.target.files ? e.target.files[0] : "")}/>
+                                            <input id="dropzone-file" type="file" className="hidden" name="image" onChange={()=>handleImageChange(event)}/>
                                         </label>
                                     </div>
                                     <div className='w-full'>
@@ -112,7 +244,7 @@ const EditBlog = () => {
                                 </div>
                             </div>
                             <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                                <button type="submit" className="inline-flex w-full justify-center rounded-md bg-green-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Publish now</button>
+                                <button type="submit" className="inline-flex w-full justify-center rounded-md bg-green-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">{isSubmitting ?  "submitting" : "Publish now"}</button>
                                 <button type="button" className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" onClick={() => setModalOpen(false)}>Cancel</button>
                             </div>
                         </div>

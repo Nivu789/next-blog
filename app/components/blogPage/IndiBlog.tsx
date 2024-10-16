@@ -9,6 +9,7 @@ import { fetchIndiBlog } from '@/app/actions/blogRelated'
 import { Bounce, toast } from 'react-toastify'
 import moment from 'moment'
 import {Editor, convertFromRaw,EditorState} from 'draft-js';
+import Link from 'next/link'
 
 
 
@@ -39,8 +40,8 @@ const IndiBlog = () => {
         const fetchBlogPost = async () => {
             
             
-
-            const response = await fetchIndiBlog(blogId)
+            const blogIdToSend = blogId[0]
+            const response = await fetchIndiBlog(blogIdToSend)
 
             if (response?.success) {
                 if (response.blogPost) {
@@ -88,12 +89,12 @@ const IndiBlog = () => {
                     <h1 className='text-4xl font-bold w-1/2 text-center'>{blogPost && blogPost.title}</h1>
                     <h3>{blogPost?.subTitle}</h3>
                     <div className='grid grid-cols-3 gap-2 items-center'>
-                        <Avatar className='w-20 h-20 col-span-1'>
+                        <Link href={`/author/${blogPost?.userId}`}><Avatar className='w-20 h-20 col-span-1'>
                             <AvatarImage src={blogPost?.userImage || ""} />
                             <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
+                        </Avatar></Link>
                         <div className='col-span-2 flex flex-col'>
-                            <span className='text-xl font-semibold'>{blogPost?.userName}</span>
+                            <Link href={`/author/${blogPost?.userId}`}><span className='text-xl font-semibold'>{blogPost?.userName}</span></Link>
                             <div className='flex gap-1 text-gray-500'>
                                 <span>{moment(blogPost?.createdAt).format("MMMM Do YYYY")}</span>
                                 <span>&#9679;</span>
@@ -133,6 +134,7 @@ const IndiBlog = () => {
                             <div className='flex gap-1 text-gray-500'>
                                 Mario, a co-founder of Acme and the content management system Sanity is an accomplished Staff Engineer with a specialization in Frontend at Vercel. Before his current position, he served as a Senior Engineer at Apple.
                             </div>
+                            <Link href={`/author/${blogPost?.userId}`}><div className='text-blue-500'>View profile</div></Link>
                         </div>
                     </div>
                     </div>
