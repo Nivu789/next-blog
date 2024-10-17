@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { SlOptionsVertical } from "react-icons/sl";
 import {
@@ -15,6 +15,7 @@ import { useEditBlogId } from '@/app/contexts/EditPageContext';
 import { deleteBlog } from '@/app/actions/blogRelated';
 import { Bounce, toast } from 'react-toastify';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 
 interface blogPosts {
@@ -35,6 +36,12 @@ interface blogPosts {
 const BlogCard = ({ item }: blogPosts) => {
     
     const {data:session} = useSession()
+
+    const router = useRouter()
+
+    useEffect(()=>{
+        router.refresh()
+    },[session])
 
     const {setEditBlogId} = useEditBlogId()
 

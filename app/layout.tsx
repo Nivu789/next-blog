@@ -32,6 +32,7 @@ export default function RootLayout({
   return (
     <NextAuthProvider>
     <html lang="en">
+    
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

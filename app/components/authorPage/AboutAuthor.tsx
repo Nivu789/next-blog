@@ -30,7 +30,7 @@ const AboutAuthor = () => {
         </div>
 
         <div>
-            <AuthorPosts setUserImage={setUserImage} setUserName={setUsername}/>
+            <AuthorPosts setUserImage={setUserImage} setUserName={setUsername} userId={userId}/>
         </div>
     </Container>
   )

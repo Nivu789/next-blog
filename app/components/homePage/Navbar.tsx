@@ -21,12 +21,16 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
 
 import { HiPencilAlt } from "react-icons/hi";
 
 
 
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
+
+
 
 import { CiSearch } from "react-icons/ci";
 
@@ -109,12 +113,19 @@ const Navbar = async () => {
                     <div className='flex items-center gap-5'>
                         <Link href={'/create-blog'}><div className='flex text-[15px] font-semibold items-center cursor-pointer'><HiPencilAlt />Write</div></Link>
                         <SessionButton session={session} />
-                        
+
                         <DropdownMenu>
                             <DropdownMenuTrigger>
-                            <div className='h-10'>
-                            <img src={session?.user.image ? session.user.image : "./logo.svg"} alt="" className='h-full rounded-full' referrerPolicy="no-referrer"/>
-                            </div>
+                                <div className='h-10'>
+                                    {
+                                        session?.user.image ? <img src={session.user.image} alt="" className='h-full rounded-full' referrerPolicy="no-referrer" />
+                                            :
+                                            <Avatar className='text-sm'>
+
+                                                <AvatarFallback>CN</AvatarFallback>
+                                            </Avatar>
+                                    }
+                                </div>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>

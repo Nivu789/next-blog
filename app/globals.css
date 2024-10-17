@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0; /* Reset default margin */
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -75,4 +81,6 @@
       scrollbar-width: none;  /* Firefox */
 }
 }
+
+
 

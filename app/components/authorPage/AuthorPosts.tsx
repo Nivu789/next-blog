@@ -20,19 +20,21 @@ interface blogPosts {
  
 const fetcher = (url:string) => axios.get(url).then(res => res.data)
 
-const AuthorPosts = ({setUserImage,setUserName}:
+const AuthorPosts = ({setUserImage,setUserName,userId}:
     {
         setUserImage:(userImage:string)=>void,
-        setUserName:(username:string)=>void
+        setUserName:(username:string)=>void,
+        userId:string | string[]
     }) => {
     
-    const { data, error, isLoading } = useSWR('/api/author-posts', fetcher)
+    const { data, error, isLoading } = useSWR(`/api/author-posts/${userId}`, fetcher)
 
     console.log(data)
 
     if(data && data.blogsPosts[0]){
         setUserImage(data.blogsPosts[0].userImage)
         setUserName(data.blogsPosts[0].userName)
+        
     }
 
     if(isLoading){
