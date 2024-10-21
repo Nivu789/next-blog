@@ -37,4 +37,4 @@ jobs:
             sudo docker pull nived789/next-blog:latest
             sudo docker stop next-blog || true
             sudo docker rm next-blog || true
-            sudo docker run -d --name next-blog -p 3000:3000 nived789/next-blog:latest
+            sudo docker run -e DATABASE_URL=${{secrets.DATABASE_URL}} -d --name next-blog -p 3000:3000 nived789/next-blog:latest
