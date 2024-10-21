@@ -18,20 +18,6 @@ type Inputs = {
     category:string
 }
 
-// type blogPost = {
-    
-//         title: string;
-//         id: number;
-//         userId: number;
-//         userName: string | null;
-//         userImage: string | null;
-//         content: string;
-//         topic: string | null;
-//         subTitle: string | null;
-//         thumbnail: string | null;
-//         createdAt: Date;
-    
-// }
 
 const EditBlog = () => {
     let {editBlogId} = useEditBlogId()

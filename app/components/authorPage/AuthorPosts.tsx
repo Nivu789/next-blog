@@ -51,7 +51,7 @@ const AuthorPosts = ({setUserImage,setUserName,userId}:
     <div className='grid grid-cols-12'>
         
         {data.blogsPosts && data.blogsPosts.map((item:blogPosts)=>(
-            <BlogCard key={item.id} item={item}/>
+            <BlogCard item={item} key={item.id}/>
         ))}
         
             
