@@ -1,9 +1,9 @@
 "use client"
 
 import { useEditBlogId } from '@/app/contexts/EditPageContext'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import Container from '../Container'
-import { useForm, SubmitHandler, Form } from "react-hook-form"
+import { useForm, SubmitHandler } from "react-hook-form"
 import { Editor } from 'react-draft-wysiwyg';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
@@ -18,20 +18,20 @@ type Inputs = {
     category:string
 }
 
-type blogPost = {
+// type blogPost = {
     
-        title: string;
-        id: number;
-        userId: number;
-        userName: string | null;
-        userImage: string | null;
-        content: string;
-        topic: string | null;
-        subTitle: string | null;
-        thumbnail: string | null;
-        createdAt: Date;
+//         title: string;
+//         id: number;
+//         userId: number;
+//         userName: string | null;
+//         userImage: string | null;
+//         content: string;
+//         topic: string | null;
+//         subTitle: string | null;
+//         thumbnail: string | null;
+//         createdAt: Date;
     
-}
+// }
 
 const EditBlog = () => {
     let {editBlogId} = useEditBlogId()
@@ -42,7 +42,7 @@ const EditBlog = () => {
         watch,
         setValue,
         reset,
-        formState: { errors ,isSubmitting},
+        formState: { isSubmitting},
     } = useForm<Inputs>()
 
     const [publishButton, setPublishButton] = useState<boolean>(false)
@@ -168,7 +168,7 @@ const EditBlog = () => {
 
     const [imageChanged,setImageChanged] = useState(false)
 
-    const handleImageChange = (e:any) =>{
+    const handleImageChange = (e:ChangeEvent<HTMLInputElement>) =>{
         setImage(e.target.files ? e.target.files[0] : "")
         setImageChanged(true)
     }
@@ -209,7 +209,7 @@ const EditBlog = () => {
                                                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">{image ? "Contains " : "Click to upload"}</span>{image ? "1 file" : "or drag and drop"}</p>
                                                 <p className="text-xs text-gray-500 dark:text-gray-400">{image ? "Perfect" : "Include a high-quality image in your story to make it more inviting to readers."}</p>
                                             </div>
-                                            <input id="dropzone-file" type="file" className="hidden" name="image" onChange={()=>handleImageChange(event)}/>
+                                            <input id="dropzone-file" type="file" className="hidden" name="image" onChange={(e)=>handleImageChange(e)}/>
                                         </label>
                                     </div>
                                     <div className='w-full'>
@@ -221,8 +221,8 @@ const EditBlog = () => {
                                         <input type="text" {...register("category")} placeholder='add a topic' className='py-0 text-sm title-input w-full border-0 border-b-2' style={{ outline: "none" }} />
                                     </div>
                                     {categoryData.length >= 1 && <div className='w-full flex flex-col gap-1'>
-                                        {categoryData.map((item:any)=>(
-                                            <p className='bg-black text-white px-2 rounded-xl py-1' onClick={()=>{
+                                        {categoryData.map(({item}:{item:{categoryName:string,id:number}})=>(
+                                            <p className='bg-black text-white px-2 rounded-xl py-1' key={item.id} onClick={()=>{
                                                 setValue("category",item.categoryName)
                                                 setCategoryData([])
                                             }}>

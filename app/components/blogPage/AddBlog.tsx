@@ -27,7 +27,6 @@ const AddBlog = () => {
         handleSubmit,
         watch,
         setValue,
-        formState: { errors },
     } = useForm<Inputs>()
 
 
@@ -185,8 +184,8 @@ const AddBlog = () => {
                                         <input type="text" {...register("category")} placeholder='add a topic' className='py-0 text-sm title-input w-full border-0 border-b-2' style={{ outline: "none" }} />
                                     </div>
                                     {categoryData.length >= 1 && <div className='w-full flex flex-col gap-1'>
-                                        {categoryData.map((item:any)=>(
-                                            <p className='bg-black text-white px-2 rounded-xl py-1' onClick={()=>{
+                                        {categoryData.map(({item}:{item:{categoryName:string,id:number}})=>(
+                                            <p className='bg-black text-white px-2 rounded-xl py-1' key={item.id} onClick={()=>{
                                                 setValue("category",item.categoryName)
                                                 setCategoryData([])
                                             }}>

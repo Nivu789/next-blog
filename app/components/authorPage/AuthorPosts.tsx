@@ -1,4 +1,4 @@
-import React, { SetStateAction } from 'react'
+import React from 'react'
 import axios from 'axios'
 import useSWR from 'swr'
 import BlogCard from '../blogPage/BlogCard'
@@ -27,7 +27,7 @@ const AuthorPosts = ({setUserImage,setUserName,userId}:
         userId:string | string[]
     }) => {
     
-    const { data, error, isLoading } = useSWR(`/api/author-posts/${userId}`, fetcher)
+    const { data, isLoading } = useSWR(`/api/author-posts/${userId}`, fetcher)
 
     console.log(data)
 
@@ -51,7 +51,7 @@ const AuthorPosts = ({setUserImage,setUserName,userId}:
     <div className='grid grid-cols-12'>
         
         {data.blogsPosts && data.blogsPosts.map((item:blogPosts)=>(
-            <BlogCard item={item}/>
+            <BlogCard key={item.id} item={item}/>
         ))}
         
             
