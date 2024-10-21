@@ -32,7 +32,7 @@ import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 
 
 
-import { CiSearch } from "react-icons/ci";
+
 
 
 
@@ -43,8 +43,7 @@ import Link from 'next/link';
 const Navbar = async () => {
 
     const session = await auth()
-    console.log(session?.user.image)
-
+    
     return (
         <>
             <div className='lg:flex justify-between items-center shadow-xl text-2xl w-full hidden' style={{ padding: "10px 120px 10px 120px" }}>
@@ -118,7 +117,7 @@ const Navbar = async () => {
                             <DropdownMenuTrigger>
                                 <div className='h-10'>
                                     {
-                                        session?.user.image ? <img src={session.user.image} alt="" className='h-full rounded-full' referrerPolicy="no-referrer" />
+                                        session?.user?.image ? <img src={session.user.image} alt="" className='h-full rounded-full' referrerPolicy="no-referrer" />
                                             :
                                             <Avatar className='text-sm'>
 
@@ -130,7 +129,7 @@ const Navbar = async () => {
                             <DropdownMenuContent>
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-                                <Link href={`/author/${session?.user.id}`}><DropdownMenuItem>Profile</DropdownMenuItem></Link>
+                                <Link href={`/author/${session?.user?.id}`}><DropdownMenuItem>Profile</DropdownMenuItem></Link>
                                 <DropdownMenuItem>Billing</DropdownMenuItem>
                                 <DropdownMenuItem>Team</DropdownMenuItem>
                                 <DropdownMenuItem>Subscription</DropdownMenuItem>

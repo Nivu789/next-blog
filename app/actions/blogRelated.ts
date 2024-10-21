@@ -53,15 +53,15 @@ export async function manageBlogImageUpload(formData:FormData){
 
 export async function createBlog(title:string,category:string,subTitle:string,content:string,image:string){
     const session = await auth()
-    const userId = parseInt(session?.user.id||"")
-    console.log("Name",session?.user.name)
+    const userId = parseInt(session?.user?.id||"")
+    console.log("Name",session?.user?.name)
     console.log(image)
     try {
         const blog = await prisma.blog.create({
             data:{
                 userId,
                 userName:session?.user?.name,
-                userImage:session?.user.image,
+                userImage:session?.user?.image,
                 title,
                 topic:category,
                 subTitle,

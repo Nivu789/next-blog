@@ -92,7 +92,7 @@ const BlogCard = ({ item }: blogPosts) => {
                     <span>&#9679;</span>
                     <span>{moment(item.createdAt).format("MMMM Do YYYY")}</span>
                 </div>
-                {session?.user.id == item.userId.toString() && <Popover>
+                {session?.user?.id == item.userId.toString() && <Popover>
                     <PopoverTrigger><SlOptionsVertical /></PopoverTrigger>
                     <PopoverContent className='flex flex-col gap-2'>
                         <Link href={'/edit-blog'}><p className='cursor-pointer' onClick={()=>handleBlogEdit(item.id)}>Edit post</p></Link>
