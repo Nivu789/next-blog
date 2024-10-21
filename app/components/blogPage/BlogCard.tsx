@@ -45,7 +45,7 @@ const BlogCard = ({ item }: blogPosts) => {
 
     const {setEditBlogId} = useEditBlogId()
 
-    const handleBlogEdit = (itemId:number) =>{
+    const handleBlogEdit = () =>{
         setEditBlogId(item.id)
         localStorage.setItem("edit-id",item.id.toString())
     }
@@ -95,7 +95,7 @@ const BlogCard = ({ item }: blogPosts) => {
                 {session?.user?.id == item.userId.toString() && <Popover>
                     <PopoverTrigger><SlOptionsVertical /></PopoverTrigger>
                     <PopoverContent className='flex flex-col gap-2'>
-                        <Link href={'/edit-blog'}><p className='cursor-pointer' onClick={()=>handleBlogEdit(item.id)}>Edit post</p></Link>
+                        <Link href={'/edit-blog'}><p className='cursor-pointer' onClick={()=>handleBlogEdit()}>Edit post</p></Link>
                         <p className='cursor-pointer text-red-600' onClick={()=>handleBlogDelete(item.id)}>Delete post</p>
                     </PopoverContent>
                 </Popover>}

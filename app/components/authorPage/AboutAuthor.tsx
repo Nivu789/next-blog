@@ -5,13 +5,13 @@ import { useParams } from 'next/navigation'
 import Container from '../Container'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import AuthorPosts from './AuthorPosts'
-import { useSession } from 'next-auth/react'
+
 
 const AboutAuthor = () => {
     const params = useParams()
     const {userId} = params
 
-    const {data:session} = useSession()
+    
 
     const [userImage,setUserImage] = useState("")
     const [username,setUsername] = useState("")
