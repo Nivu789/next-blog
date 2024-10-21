@@ -29,12 +29,12 @@ jobs:
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
-        with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-          sudo docker pull nived789/next-blog:latest
-          sudo docker stop next-blog || true
-          sudo docker rm next-blog || true
-          sudo docker run -d --name next-blog -p 3000:3000 100xdevs/next-blog:latest
+        with: 
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo docker pull nived789/next-blog:latest
+            sudo docker stop next-blog || true
+            sudo docker rm next-blog || true
+            sudo docker run -d --name next-blog -p 3000:3000 100xdevs/next-blog:latest
