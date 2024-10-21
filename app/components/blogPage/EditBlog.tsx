@@ -19,9 +19,6 @@ type Inputs = {
 }
 
 
-
-
-
 const EditBlog = () => {
     let {editBlogId} = useEditBlogId()
 
